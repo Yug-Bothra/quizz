@@ -241,77 +241,129 @@ const handleSubmitQuiz = useCallback(() => {
     );
   }
 
-  if (showResults) {
-    const percentage = (score / questions.length * 100).toFixed(1);
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full">
-          <div className="text-center mb-8">
-            <Trophy className={`h-20 w-20 mx-auto mb-4 ${score >= 15 ? 'text-yellow-500' : score >= 10 ? 'text-gray-400' : 'text-orange-500'}`} />
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Quiz Completed!</h2>
-            <div className="text-6xl font-bold text-indigo-600 mb-2">{score}/20</div>
-            <div className="text-xl text-gray-600 mb-4">{percentage}% Correct</div>
-            <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
-              score >= 15 ? 'bg-green-100 text-green-800' : 
-              score >= 10 ? 'bg-yellow-100 text-yellow-800' : 
-              'bg-red-100 text-red-800'
-            }`}>
-              {score >= 15 ? 'Excellent!' : score >= 10 ? 'Good Job!' : 'Keep Practicing!'}
-            </div>
+if (showResults) {
+  const percentage = ((score / questions.length) * 100).toFixed(1);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full">
+        
+        {/* Header */}
+        <div className="text-center mb-8">
+          <Trophy
+            className={`h-20 w-20 mx-auto mb-4 ${
+              score >= 15
+                ? "text-yellow-500"
+                : score >= 10
+                ? "text-gray-400"
+                : "text-orange-500"
+            }`}
+          />
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            Quiz Completed!
+          </h2>
+          <div className="text-6xl font-bold text-indigo-600 mb-2">
+            {score}/20
           </div>
-          
-          <div className="space-y-4 max-h-96 overflow-y-auto mb-6">
-            {questions.map((question, index) => {
-              const userAnswer = userAnswers[index];
-              const correctAnswer = question.correctAnswer.trim().toUpperCase();
-              const isCorrect = userAnswer === correctAnswer;
-              
-              return (
-                <div key={index} className={`p-4 rounded-lg border-2 ${isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
-                  <div className="flex items-start space-x-3">
-                    {isCorrect ? 
-                      <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" /> : 
-                      <XCircle className="h-6 w-6 text-red-600 mt-1 flex-shrink-0" />
-                    }
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-800 mb-2">Q{index + 1}: {question.question}</p>
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div className={`p-2 rounded ${userAnswer === 'A' ? (isCorrect ? 'bg-green-200' : 'bg-red-200') : 'bg-gray-100'}`}>
-                          A: {question.optionA}
+          <div className="text-xl text-gray-600 mb-4">
+            {percentage}% Correct
+          </div>
+          <div
+            className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
+              score >= 15
+                ? "bg-green-100 text-green-800"
+                : score >= 10
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
+            {score >= 15
+              ? "Excellent!"
+              : score >= 10
+              ? "Good Job!"
+              : "Keep Practicing!"}
+          </div>
+        </div>
+
+        {/* Questions Review */}
+        <div className="space-y-4 max-h-96 overflow-y-auto mb-6">
+          {questions.map((question, index) => {
+            const userAnswer = userAnswers[index];
+            const correctAnswer = question.correctAnswer.trim().toUpperCase();
+            const isCorrect = userAnswer === correctAnswer;
+
+            return (
+              <div
+                key={index}
+                className={`p-4 rounded-lg border-2 ${
+                  isCorrect
+                    ? "border-green-200 bg-green-50"
+                    : "border-red-200 bg-red-50"
+                }`}
+              >
+                <div className="flex items-start space-x-3">
+                  {isCorrect ? (
+                    <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
+                  ) : (
+                    <XCircle className="h-6 w-6 text-red-600 mt-1 flex-shrink-0" />
+                  )}
+
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-800 mb-2">
+                      Q{index + 1}: {question?.question}
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      {["A", "B", "C", "D"].map((opt) => (
+                        <div
+                          key={opt}
+                          className={`p-2 rounded ${
+                            userAnswer === opt
+                              ? correctAnswer === opt
+                                ? "bg-green-200"
+                                : "bg-red-200"
+                              : correctAnswer === opt
+                              ? "bg-green-100"
+                              : "bg-gray-100"
+                          }`}
+                        >
+                          {opt}: {question[`option${opt}`]}
                         </div>
-                        <div className={`p-2 rounded ${userAnswer === 'B' ? (isCorrect ? 'bg-green-200' : 'bg-red-200') : 'bg-gray-100'}`}>
-                          B: {question.optionB}
-                        </div>
-                        <div className={`p-2 rounded ${userAnswer === 'C' ? (isCorrect ? 'bg-green-200' : 'bg-red-200') : 'bg-gray-100'}`}>
-                          C: {question.optionC}
-                        </div>
-                        <div className={`p-2 rounded ${userAnswer === 'D' ? (isCorrect ? 'bg-green-200' : 'bg-red-200') : 'bg-gray-100'}`}>
-                          D: {question.optionD}
-                        </div>
-                      </div>
-                      {!isCorrect && (
-                        <p className="text-sm text-green-700 mt-2 font-medium">
-                          Correct Answer: {correctAnswer}
-                        </p>
-                      )}
+                      ))}
                     </div>
+
+                    {!isCorrect && (
+                      <p className="text-sm text-green-700 mt-2 font-medium">
+                        ✅ Correct Answer: {correctAnswer}
+                      </p>
+                    )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-          
-          <button 
-            onClick={resetQuiz}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-colors flex items-center justify-center space-x-2"
-          >
-            <RotateCcw className="h-5 w-5" />
-            <span>Take Another Quiz</span>
-          </button>
+              </div>
+            );
+          })}
         </div>
+
+        {/* Buttons */}
+        <button
+          onClick={resetQuiz}
+          className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-colors flex items-center justify-center space-x-2 mb-3"
+        >
+          <RotateCcw className="h-5 w-5" />
+          <span>Take Another Quiz</span>
+        </button>
+
+        <button
+          onClick={() => navigate("/quiz-dashboard")}
+          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-colors flex items-center justify-center space-x-2"
+        >
+          <Trophy className="h-5 w-5" />
+          <span>Go to Dashboard</span>
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
